@@ -1,28 +1,11 @@
-#!/usr/bin/env python
-# coding: utf-8
+# The following project uses PIL, openCV and tesserract libraries for image processing
+# Pre loaded images in Kernel are used as reference. Image paths can be changed to be loaded from a local machine
+# This program takes in a word as user input and scans the sample images for that word. In this case, the images are newspaper pages.
+# Which ever page contains that word, image is scanned for any faces in that page. 
+# The output consists of detected face cropped out and arranged in order from all the images containing the word given by the user.
+# If If no face detected in a page with given word then just outputs string 'no face detected'
 
-# # The Project #
-# 1. This is a project with minimal scaffolding. Expect to use the the discussion forums to gain insights! It’s not cheating to ask others for opinions or perspectives!
-# 2. Be inquisitive, try out new things.
-# 3. Use the previous modules for insights into how to complete the functions! You'll have to combine Pillow, OpenCV, and Pytesseract
-# 4. There are 4 functions you need to complete to have a working project. These functions are described using the RE formula, which stands for Requires and Effects. Each function will have its own RE located directly above the function definition. The Requires section describes what is needed in the function argument (inbetween the function definition parenthesis). The Effects portion outlines what the function is supposed to do. 
-# 5. There are hints provided in Coursera, feel free to explore the hints if needed. Each hint provide progressively more details on how to solve the issue. This project is intended to be comprehensive and difficult if you do it without the hints.
-# 
-# ### The Assignment ###
-# Take a [ZIP file](https://en.wikipedia.org/wiki/Zip_(file_format)) of images and process them, using a [library built into python](https://docs.python.org/3/library/zipfile.html) that you need to learn how to use. A ZIP file takes several different files and compresses them, thus saving space, into one single file. The files in the ZIP file we provide are newspaper images (like you saw in week 3). Your task is to write python code which allows one to search through the images looking for the occurrences of keywords and faces. E.g. if you search for "pizza" it will return a contact sheet of all of the faces which were located on the newspaper page which mentions "pizza". This will test your ability to learn a new ([library](https://docs.python.org/3/library/zipfile.html)), your ability to use OpenCV to detect faces, your ability to use tesseract to do optical character recognition, and your ability to use PIL to composite images together into contact sheets.
-# 
-# Each page of the newspapers is saved as a single PNG image in a file called [images.zip](./readonly/images.zip). These newspapers are in english, and contain a variety of stories, advertisements and images. Note: This file is fairly large (~200 MB) and may take some time to work with, I would encourage you to use [small_img.zip](./readonly/small_img.zip) for testing.
-# 
-# Here's an example of the output expected. Using the [small_img.zip](./readonly/small_img.zip) file, if I search for the string "Christopher" I should see the following image:
-# ![Christopher Search](./readonly/small_project.png)
-# If I were to use the [images.zip](./readonly/images.zip) file and search for "Mark" I should see the following image (note that there are times when there are no faces on a page, but a word is found!):
-# ![Mark Search](./readonly/large_project.png)
-# 
-# Note: That big file can take some time to process - for me it took nearly ten minutes! Use the small one for testing.
-
-# In[2]:
-
-
+##===================================================================================================================##
 import PIL
 import zipfile
 import pytesseract
@@ -35,9 +18,7 @@ from PIL import Image
 # loading the face detection classifier
 face_cascade = cv.CascadeClassifier('readonly/haarcascade_frontalface_default.xml')
 
-
 # In[2]:
-
 
 # Extarcting Images from Zip file
 ##==================================================##
@@ -47,9 +28,7 @@ img_names = zip_file.namelist()
 zip_file.extractall('readonly/Untitled Folder')
 ##==================================================##
 
-
 # In[3]:
-
 
 # Importing Images
 ##=============================================================##
@@ -58,24 +37,18 @@ for i in img_names:
     images.append(Image.open('readonly/Untitled Folder/' + i))
 ##=============================================================##
 
-
 # In[4]:
-
 
 print(images[0])
 
-
 # In[5]:
-
 
 global struct
 struct = {}
 for i in img_names:
     struct[i] = {}
 
-
 # In[6]:
-
 
 text = []
 # Extarcting Text from images
@@ -83,9 +56,7 @@ text = []
 text.append(pytesseract.image_to_string(images[0]))
 ##==========================================##
 
-
 # In[7]:
-
 
 ## Importing Images for Face Detection
 ##=============================================================##
@@ -94,9 +65,7 @@ for i in img_names:
     cv_images.append(cv.imread('readonly/Untitled Folder/' + i))
 ##=============================================================##
 
-
 # In[8]:
-
 
 count = 0
 for i in img_names:
@@ -104,18 +73,14 @@ for i in img_names:
     struct[i]['cv_img'] = cv_images[count]
     count+= 1
 
-
 # In[9]:
-
 
 count = 0
 for i in img_names:
     struct[i]['text'] = pytesseract.image_to_string(images[count])
     count += 1
 
-
 # In[33]:
-
 
 def detect_faces(img):
     ## Detecting Faces
@@ -173,17 +138,12 @@ def detect_faces(img):
     #=========================================================================================##
     return contact_sheet
 
-
 # In[34]:
-
-
 
 for i in img_names:
     struct[i]['cover'] = detect_faces(i)
 
-
 # In[35]:
-
 
 user_in = input('Enter word to search:')
 for i in img_names:
@@ -191,8 +151,6 @@ for i in img_names:
         print('Result found in file {}'. format(i))
         display(struct[i]['cover'])
 
-
-# In[ ]:
 
 
 
